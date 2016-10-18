@@ -14,8 +14,8 @@ var cookieParser = require('cookie-parser');
 var session = require('express-session');
 var passport = require('passport');
 var OpenIDConnectStrategy = require('passport-idaas-openidconnect').IDaaSOIDCStrategy;
-var redis = require('redis');
-var RedisStore = require('connect-redis')(session);
+
+
 
 // cfenv provides access to your Cloud Foundry environment
 // for more info, see: https://www.npmjs.com/package/cfenv
@@ -26,32 +26,8 @@ var appEnv = cfenv.getAppEnv();
 // create a new express server
 var app = express();
 
-// get configuration for redis backing service and connect to service
-var redisConfig = appEnv.getService(/Redis.*/)
-var redisPort = redisConfig.credentials.port;
-var redisHost = redisConfig.credentials.hostname;
-var redisPasswd = redisConfig.credentials.password;
-
-var redisclient = redis.createClient(redisPort, redisHost, {no_ready_check: true});
-redisclient.auth(redisPasswd, function (err) {
-    if (err) {
-      throw err;
-    }
-});
-
-redisclient.on('connect', function() {
-    console.log('Connected to Redis');
-});
-
-// define express session services, etc for SSO
 app.use(cookieParser());
-// app.use(session({resave: 'true', saveUninitialized: 'true' , secret: 'keyboard cat'}));
-app.use(session({
-  store: new RedisStore({ client: redisclient }),
-  resave: 'true',
-  saveUninitialized: 'true',
-  secret: 'top secr8t'
-}));
+app.use(session({resave: 'true', saveUninitialized: 'true' , secret: 'keyboard cat'}));
 app.use(passport.initialize());
 app.use(passport.session());
 
