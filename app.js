@@ -15,8 +15,6 @@ var session = require('express-session');
 var passport = require('passport');
 var OpenIDConnectStrategy = require('passport-idaas-openidconnect').IDaaSOIDCStrategy;
 
-
-
 // cfenv provides access to your Cloud Foundry environment
 // for more info, see: https://www.npmjs.com/package/cfenv
 var cfenv = require('cfenv');
@@ -26,6 +24,7 @@ var appEnv = cfenv.getAppEnv();
 // create a new express server
 var app = express();
 
+// define express session services, etc for SSO
 app.use(cookieParser());
 app.use(session({resave: 'true', saveUninitialized: 'true' , secret: 'keyboard cat'}));
 app.use(passport.initialize());
@@ -47,7 +46,7 @@ var authorization_url = ssoConfig.credentials.authorizationEndpointUrl;
 var token_url = ssoConfig.credentials.tokenEndpointUrl;
 var issuer_id = ssoConfig.credentials.issuerIdentifier;
 // you MUST change the host route to match your application name
-var callback_url = 'https://scaleSSO-TOR0815.mybluemix.net/auth/sso/callback';
+var callback_url = 'https://dbs-api.mybluemix.net//auth/sso/callback';
 
 var OpenIDConnectStrategy = require('passport-idaas-openidconnect').IDaaSOIDCStrategy;
 var Strategy = new OpenIDConnectStrategy({
